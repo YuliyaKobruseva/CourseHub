@@ -2,6 +2,9 @@ package com.example.coursehub.interfaces.rest;
 
 import com.example.coursehub.application.usecase.course.*;
 import com.example.coursehub.domain.entity.Course;
+import com.example.coursehub.interfaces.rest.dto.request.course.CourseRequest;
+import com.example.coursehub.interfaces.rest.dto.response.course.CourseResponse;
+import com.example.coursehub.interfaces.rest.dto.response.student.StudentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +33,7 @@ public class CourseController {
     private final GetCourseByIdUseCase getCourseById;
     private final UpdateCourseUseCase updateCourse;
     private final DeleteCourseUseCase deleteCourse;
+    private final GetStudentsByCourseIdUseCase getStudentsByCourseId;
 
     @GetMapping
     @Operation(
@@ -39,11 +43,11 @@ public class CourseController {
                             responseCode = "200",
                             description = OK,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Course.class))
+                                    schema = @Schema(implementation = CourseResponse.class))
                     )
             }
     )
-    public ResponseEntity<List<Course>> getAll() {
+    public ResponseEntity<List<CourseResponse>> getAll() {
         return ResponseEntity.ok(getAllCourses.getCourses());
     }
 
@@ -64,9 +68,30 @@ public class CourseController {
                     )
             }
     )
-    public ResponseEntity<Course> getById(
+    public ResponseEntity<CourseResponse> getById(
             @Parameter(description = "ID of the course to retrieve") @PathVariable Long id) {
         return ResponseEntity.ok(getCourseById.getCourseById(id));
+    }
+
+    @GetMapping("/course/{courseId}")
+    @Operation(
+            summary = "Get all students assigned to a specific course",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = OK,
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = StudentResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = NOT_FOUND
+                    )
+            }
+    )
+    public ResponseEntity<List<StudentResponse>> getByCourse(
+            @Parameter(description = "Course ID") @PathVariable Long courseId) {
+        return ResponseEntity.ok(getStudentsByCourseId.execute(courseId));
     }
 
     @PostMapping
@@ -77,7 +102,7 @@ public class CourseController {
                             responseCode = "201",
                             description = CREATED,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Course.class))
+                                    schema = @Schema(implementation = CourseResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -86,9 +111,10 @@ public class CourseController {
                     )
             }
     )
-    public ResponseEntity<Course> create(
-            @Parameter(description = "Course to create") @RequestBody @Valid Course course) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(createCourse.addCourse(course));
+    public ResponseEntity<CourseResponse> create(
+            @Parameter(description = "Course to create") @RequestBody @Valid CourseRequest request) {
+        CourseResponse response = createCourse.addCourse(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
@@ -99,7 +125,7 @@ public class CourseController {
                             responseCode = "200",
                             description = OK,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Course.class))
+                                    schema = @Schema(implementation = CourseResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -108,10 +134,10 @@ public class CourseController {
                     )
             }
     )
-    public ResponseEntity<Course> update(
+    public ResponseEntity<CourseResponse> update(
             @Parameter(description = "ID of the course to update") @PathVariable Long id,
-            @Parameter(description = "Updated course data") @RequestBody @Valid Course course) {
-        return ResponseEntity.ok(updateCourse.updateCourse(id, course));
+            @Parameter(description = "Updated course data") @RequestBody @Valid CourseRequest request) {
+        return ResponseEntity.ok(updateCourse.updateCourse(id, request));
     }
 
     @DeleteMapping("/{id}")

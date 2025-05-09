@@ -1,7 +1,8 @@
 package com.example.coursehub.interfaces.rest;
 
 import com.example.coursehub.application.usecase.student.*;
-import com.example.coursehub.domain.entity.Student;
+import com.example.coursehub.interfaces.rest.dto.request.student.StudentRequest;
+import com.example.coursehub.interfaces.rest.dto.response.student.StudentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,11 +39,11 @@ public class StudentController {
                             responseCode = "200",
                             description = OK,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Student.class))
+                                    schema = @Schema(implementation = StudentResponse.class))
                     )
             }
     )
-    public ResponseEntity<List<Student>> getAll() {
+    public ResponseEntity<List<StudentResponse>> getAll() {
         return ResponseEntity.ok(getAllStudents.getAllStudents());
     }
 
@@ -54,7 +55,7 @@ public class StudentController {
                             responseCode = "200",
                             description = OK,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Student.class))
+                                    schema = @Schema(implementation = StudentResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -63,9 +64,8 @@ public class StudentController {
                     )
             }
     )
-    public ResponseEntity<Student> getById(
-            @Parameter(description = "ID of the student to retrieve")
-            @PathVariable Long id) {
+    public ResponseEntity<StudentResponse> getById(
+            @Parameter(description = "ID of the student to retrieve") @PathVariable Long id) {
         return ResponseEntity.ok(getStudentById.getStudentById(id));
     }
 
@@ -77,7 +77,7 @@ public class StudentController {
                             responseCode = "201",
                             description = CREATED,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Student.class))
+                                    schema = @Schema(implementation = StudentResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -86,11 +86,10 @@ public class StudentController {
                     )
             }
     )
-    public ResponseEntity<Student> create(
-            @Parameter(description = "ID of the course to assign the student to")
-            @PathVariable Long courseId,
-            @RequestBody @Valid Student student) {
-        Student createdStudent = createStudent.addNewStudent(student, courseId);
+    public ResponseEntity<StudentResponse> create(
+            @Parameter(description = "ID of the course to assign the student to") @PathVariable Long courseId,
+            @RequestBody @Valid StudentRequest request) {
+        StudentResponse createdStudent = createStudent.addNewStudent(request, courseId);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdStudent);
     }
 
@@ -102,7 +101,7 @@ public class StudentController {
                             responseCode = "200",
                             description = OK,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Student.class))
+                                    schema = @Schema(implementation = StudentResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -111,11 +110,10 @@ public class StudentController {
                     )
             }
     )
-    public ResponseEntity<Student> update(
-            @Parameter(description = "ID of the student to update")
-            @PathVariable Long id,
-            @RequestBody @Valid Student student) {
-        return ResponseEntity.ok(updateStudent.updateStudentInfo(id, student));
+    public ResponseEntity<StudentResponse> update(
+            @Parameter(description = "ID of the student to update") @PathVariable Long id,
+            @RequestBody @Valid StudentRequest request) {
+        return ResponseEntity.ok(updateStudent.updateStudentInfo(id, request));
     }
 
     @DeleteMapping("/{id}")
@@ -131,9 +129,7 @@ public class StudentController {
             }
     )
     public ResponseEntity<Void> delete(
-            @Parameter(description = "ID of the student to delete")
-            @PathVariable Long id
-    ) {
+            @Parameter(description = "ID of the student to delete") @PathVariable Long id) {
         deleteStudent.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }
