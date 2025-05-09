@@ -1,6 +1,8 @@
 package com.example.coursehub.interfaces.rest;
 
 import com.example.coursehub.application.usecase.course.*;
+import com.example.coursehub.application.usecase.student.EnrollStudentUseCase;
+import com.example.coursehub.application.usecase.student.GetStudentsByCourseIdUseCase;
 import com.example.coursehub.domain.entity.Course;
 import com.example.coursehub.interfaces.rest.dto.request.course.CourseRequest;
 import com.example.coursehub.interfaces.rest.dto.response.course.CourseResponse;
@@ -15,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +37,10 @@ public class CourseController {
     private final UpdateCourseUseCase updateCourse;
     private final DeleteCourseUseCase deleteCourse;
     private final GetStudentsByCourseIdUseCase getStudentsByCourseId;
+    private final EnrollStudentUseCase enrollStudentUseCase;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @Operation(
             summary = COURSE_GET_ALL,
             responses = {
@@ -52,6 +57,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @Operation(
             summary = COURSE_GET_BY_ID,
             responses = {
@@ -74,6 +80,7 @@ public class CourseController {
     }
 
     @GetMapping("/course/{courseId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Get all students assigned to a specific course",
             responses = {
@@ -95,6 +102,7 @@ public class CourseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = COURSE_CREATE,
             responses = {
@@ -118,6 +126,7 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = COURSE_UPDATE,
             responses = {
@@ -141,6 +150,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = COURSE_DELETE,
             responses = {
@@ -156,5 +166,27 @@ public class CourseController {
             @Parameter(description = "ID of the course to delete") @PathVariable Long id) {
         deleteCourse.removeCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{courseId}/students/{studentId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Enroll existing student into course",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = OK,
+                            content = @Content(schema = @Schema(implementation = StudentResponse.class))
+                    ),
+                    @ApiResponse(responseCode = "400", description = BAD_REQUEST),
+                    @ApiResponse(responseCode = "404", description = NOT_FOUND)
+            }
+    )
+    public ResponseEntity<StudentResponse> enrollStudent(
+            @PathVariable Long courseId,
+            @PathVariable Long studentId) {
+
+        StudentResponse resp = enrollStudentUseCase.enrollStudent(studentId, courseId);
+        return ResponseEntity.ok(resp);
     }
 }

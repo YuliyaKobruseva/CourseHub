@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class StudentController {
     private final DeleteStudentUseCase deleteStudent;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @Operation(
             summary = STUDENT_GET_ALL,
             responses = {
@@ -48,6 +50,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @Operation(
             summary = STUDENT_GET_BY_ID,
             responses = {
@@ -70,6 +73,7 @@ public class StudentController {
     }
 
     @PostMapping("/course/{courseId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = STUDENT_CREATE,
             responses = {
@@ -94,6 +98,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = STUDENT_UPDATE,
             responses = {
@@ -117,6 +122,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = STUDENT_DELETE,
             responses = {
