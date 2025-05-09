@@ -6,6 +6,7 @@ public class ExceptionMessages {
     public static final String INVALID_COURSE_ID = "Invalid course ID";
     public static final String DUPLICATE_STUDENT = "Student already enrolled";
     public static final String UNAUTHORIZED_ACCESS = "You do not have permission for this operation";
+    public static final String INVALID_END_DATE = "Course end date cannot be before start date";
 
     private ExceptionMessages() {
         // Prevent instantiation
