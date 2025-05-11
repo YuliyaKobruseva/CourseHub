@@ -34,7 +34,7 @@ class CreateStudentUseCaseTest extends BaseUseCaseTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
         when(studentRepository.save(any(Student.class))).thenReturn(saved);
 
-        StudentResponse response = useCase.addNewStudent(request, 1L);
+        StudentResponse response = useCase.addNewStudent(request);
 
         assertThat(response.id()).isEqualTo(5L);
         assertThat(response.firstName()).isEqualTo("María");
@@ -48,7 +48,7 @@ class CreateStudentUseCaseTest extends BaseUseCaseTest {
         StudentRequest request = StudentTestFactory.createValidRequest();
         when(courseRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> useCase.addNewStudent(request, 99L))
+        assertThatThrownBy(() -> useCase.addNewStudent(request))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(COURSE_NOT_FOUND);
     }

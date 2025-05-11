@@ -6,7 +6,7 @@ import com.example.coursehub.application.usecase.student.GetStudentsByCourseIdUs
 import com.example.coursehub.domain.entity.Course;
 import com.example.coursehub.interfaces.rest.dto.request.course.CourseRequest;
 import com.example.coursehub.interfaces.rest.dto.response.course.CourseResponse;
-import com.example.coursehub.interfaces.rest.dto.response.student.StudentResponse;
+import com.example.coursehub.interfaces.rest.dto.response.course.CourseStudentsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,7 +40,7 @@ public class CourseController {
     private final EnrollStudentUseCase enrollStudentUseCase;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','STUDENT')")
     @Operation(
             summary = COURSE_GET_ALL,
             responses = {
@@ -57,7 +57,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','STUDENT')")
     @Operation(
             summary = COURSE_GET_BY_ID,
             responses = {
@@ -79,16 +79,16 @@ public class CourseController {
         return ResponseEntity.ok(getCourseById.getCourseById(id));
     }
 
-    @GetMapping("/course/{courseId}")
+    @GetMapping("/{courseId}/students")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
-            summary = "Get all students assigned to a specific course",
+            summary = COURSE_STUDENTS,
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = OK,
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = StudentResponse.class))
+                                    schema = @Schema(implementation = CourseStudentsResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -96,9 +96,9 @@ public class CourseController {
                     )
             }
     )
-    public ResponseEntity<List<StudentResponse>> getByCourse(
+    public ResponseEntity<CourseStudentsResponse> getByCourse(
             @Parameter(description = "Course ID") @PathVariable Long courseId) {
-        return ResponseEntity.ok(getStudentsByCourseId.execute(courseId));
+        return ResponseEntity.ok(getStudentsByCourseId.getCourseStudents(courseId));
     }
 
     @PostMapping
@@ -166,27 +166,5 @@ public class CourseController {
             @Parameter(description = "ID of the course to delete") @PathVariable Long id) {
         deleteCourse.removeCourse(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{courseId}/students/{studentId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-            summary = "Enroll existing student into course",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = OK,
-                            content = @Content(schema = @Schema(implementation = StudentResponse.class))
-                    ),
-                    @ApiResponse(responseCode = "400", description = BAD_REQUEST),
-                    @ApiResponse(responseCode = "404", description = NOT_FOUND)
-            }
-    )
-    public ResponseEntity<StudentResponse> enrollStudent(
-            @PathVariable Long courseId,
-            @PathVariable Long studentId) {
-
-        StudentResponse resp = enrollStudentUseCase.enrollStudent(studentId, courseId);
-        return ResponseEntity.ok(resp);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.coursehub.interfaces.rest;
 
 import com.example.coursehub.application.usecase.student.*;
+import com.example.coursehub.interfaces.rest.dto.request.student.CourseEnrollRequest;
 import com.example.coursehub.interfaces.rest.dto.request.student.StudentRequest;
 import com.example.coursehub.interfaces.rest.dto.response.student.StudentResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +32,7 @@ public class StudentController {
     private final GetStudentByIdUseCase getStudentById;
     private final UpdateStudentUseCase updateStudent;
     private final DeleteStudentUseCase deleteStudent;
+    private final EnrollStudentUseCase enrollStudent;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
@@ -72,7 +74,7 @@ public class StudentController {
         return ResponseEntity.ok(getStudentById.getStudentById(id));
     }
 
-    @PostMapping("/course/{courseId}")
+    @PostMapping("/new")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = STUDENT_CREATE,
@@ -91,9 +93,8 @@ public class StudentController {
             }
     )
     public ResponseEntity<StudentResponse> create(
-            @Parameter(description = "ID of the course to assign the student to") @PathVariable Long courseId,
             @RequestBody @Valid StudentRequest request) {
-        StudentResponse createdStudent = createStudent.addNewStudent(request, courseId);
+        StudentResponse createdStudent = createStudent.addNewStudent(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdStudent);
     }
 
@@ -138,5 +139,26 @@ public class StudentController {
             @Parameter(description = "ID of the student to delete") @PathVariable Long id) {
         deleteStudent.deleteStudent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/enroll")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STUDENT')")
+    @Operation(
+            summary = STUDENT_ENROLL,
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = OK,
+                            content = @Content(schema = @Schema(implementation = StudentResponse.class))
+                    ),
+                    @ApiResponse(responseCode = "400", description = BAD_REQUEST),
+                    @ApiResponse(responseCode = "404", description = NOT_FOUND)
+            }
+    )
+    public ResponseEntity<StudentResponse> enrollStudent(
+            @Parameter(description = "Pre-registration request") @RequestBody @Valid CourseEnrollRequest request) {
+
+        StudentResponse resp = enrollStudent.enrollStudent(request);
+        return ResponseEntity.ok(resp);
     }
 }

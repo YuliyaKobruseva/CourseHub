@@ -5,8 +5,7 @@ import com.example.coursehub.domain.entity.Student;
 import com.example.coursehub.domain.exception.NotFoundException;
 import com.example.coursehub.infrastructure.repository.CourseRepository;
 import com.example.coursehub.infrastructure.repository.StudentRepository;
-import com.example.coursehub.interfaces.rest.dto.response.student.StudentResponse;
-import com.example.coursehub.interfaces.rest.mapper.StudentMapper;
+import com.example.coursehub.interfaces.rest.dto.response.course.CourseStudentsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,11 +20,20 @@ public class GetStudentsByCourseIdUseCase {
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
 
-    public List<StudentResponse> execute(Long courseId) {
+    public CourseStudentsResponse getCourseStudents(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException(COURSE_NOT_FOUND));
 
-        List<Student> students = studentRepository.findByCourseId(course.getId());
-        return students.stream().map(StudentMapper::toResponse).toList();
+        List<String> studentNames = studentRepository
+                .findByCourseId(course.getId())
+                .stream()
+                .map(this::fullName)
+                .toList();
+
+        return new CourseStudentsResponse(studentNames);
+    }
+
+    private String fullName(Student s) {
+        return s.getFirstName() + " " + s.getLastName();
     }
 }

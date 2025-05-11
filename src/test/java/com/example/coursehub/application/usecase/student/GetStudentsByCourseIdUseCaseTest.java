@@ -32,7 +32,7 @@ class GetStudentsByCourseIdUseCaseTest extends BaseUseCaseTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
         when(studentRepository.findByCourseId(1L)).thenReturn(List.of(student));
 
-        var result = useCase.execute(1L);
+        var result = useCase.getCourseStudents(1L);
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().courseId()).isEqualTo(1L);
@@ -42,7 +42,7 @@ class GetStudentsByCourseIdUseCaseTest extends BaseUseCaseTest {
     void givenNonExistentCourse_whenFetching_thenThrowsNotFound() {
         when(courseRepository.findById(123L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> useCase.execute(123L))
+        assertThatThrownBy(() -> useCase.getCourseStudents(123L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(COURSE_NOT_FOUND);
     }

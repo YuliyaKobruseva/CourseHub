@@ -16,15 +16,17 @@ public class OpenApiMessages {
     public static final String COURSE_CREATE = "Create a new course";
     public static final String COURSE_UPDATE = "Update an existing course";
     public static final String COURSE_DELETE = "Delete a course";
+    public static final String COURSE_STUDENTS = "Get all students assigned to a specific course";
 
     // Students
     public static final String STUDENT_TAG = "Students";
     public static final String STUDENT_TAG_DESCRIPTION = "Operations related to student management";
     public static final String STUDENT_GET_ALL = "Get all students";
     public static final String STUDENT_GET_BY_ID = "Get a student by ID";
-    public static final String STUDENT_CREATE = "Create a new student and assign to a course";
+    public static final String STUDENT_CREATE = "Create a new student";
     public static final String STUDENT_UPDATE = "Update an existing student";
     public static final String STUDENT_DELETE = "Delete a student";
+    public static final String STUDENT_ENROLL = "Enroll existing student into course";
 
     private OpenApiMessages() {}
 }
