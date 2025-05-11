@@ -1,6 +1,7 @@
 package com.example.coursehub.application.usecase.student;
 
 import com.example.coursehub.domain.exception.NotFoundException;
+import com.example.coursehub.interfaces.rest.dto.response.course.CourseStudentsResponse;
 import com.example.coursehub.util.BaseUseCaseTest;
 import com.example.coursehub.util.CourseTestFactory;
 import com.example.coursehub.util.StudentTestFactory;
@@ -32,10 +33,11 @@ class GetStudentsByCourseIdUseCaseTest extends BaseUseCaseTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
         when(studentRepository.findByCourseId(1L)).thenReturn(List.of(student));
 
-        var result = useCase.getCourseStudents(1L);
+        CourseStudentsResponse response = useCase.getCourseStudents(1L);
 
-        assertThat(result).hasSize(1);
-        assertThat(result.getFirst().courseId()).isEqualTo(1L);
+        assertThat(response.students()).hasSize(1);
+        String expectedFullName = student.getFirstName() + " " + student.getLastName();
+        assertThat(response.students().getFirst()).isEqualTo(expectedFullName);
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.example.coursehub.application.usecase.student;
 
 import com.example.coursehub.domain.entity.Student;
-import com.example.coursehub.infrastructure.repository.CourseRepository;
 import com.example.coursehub.infrastructure.repository.StudentRepository;
 import com.example.coursehub.interfaces.rest.dto.request.student.StudentRequest;
 import com.example.coursehub.interfaces.rest.dto.response.student.StudentResponse;

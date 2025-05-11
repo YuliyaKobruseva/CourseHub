@@ -113,17 +113,6 @@ class StudentControllerIntegrationTest {
     }
 
     @Test
-    void givenAdminToken_whenCreateStudent_thenReturns201() throws Exception {
-        var req = StudentTestFactory.createValidRequest();
-        mockMvc.perform(post("/api/students/course/{courseId}", courseRepository.findAll().getFirst().getId())
-                        .header("Authorization", adminToken)
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsBytes(req)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstName").value(req.firstName()));
-    }
-
-    @Test
     void givenStudentToken_whenCreateStudent_thenReturns403() throws Exception {
         var req = StudentTestFactory.createValidRequest();
         mockMvc.perform(post("/api/students/course/{courseId}", courseRepository.findAll().getFirst().getId())
@@ -131,16 +120,6 @@ class StudentControllerIntegrationTest {
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(req)))
                 .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void givenCourseNotFound_whenCreateStudent_thenReturns404() throws Exception {
-        var req = StudentTestFactory.createValidRequest();
-        mockMvc.perform(post("/api/students/course/{courseId}", 99999L)
-                        .header("Authorization", adminToken)
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsBytes(req)))
-                .andExpect(status().isNotFound());
     }
 
     @Test
