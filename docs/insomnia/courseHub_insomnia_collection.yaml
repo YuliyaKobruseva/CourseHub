@@ -1,0 +1,392 @@
+type: collection.insomnia.rest/5.0
+name: CourseHub API
+meta:
+  id: wrk_30ad0c3e018045edad3dfc073306c9a3
+  created: 1746907493755
+  modified: 1746907493755
+collection:
+  - name: Authentication
+    meta:
+      id: fld_988ac1ae189546529f7d5922b18141ff
+      created: 1746907493758
+      modified: 1746907612457
+      sortKey: -1746907493758
+    children:
+      - url: "{{ base_url }}/auth/login"
+        name: Login (POST /auth/login)
+        meta:
+          id: req_1839601eb21d408c88fb9ac7b34d77b0
+          created: 1746907493759
+          modified: 1746907610927
+          isPrivate: false
+          sortKey: -1746907493759
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "username": "admin",
+              "password": "admin123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_669006b75a864c87a64533d5b93722fe
+          - id: pair_b3e84b9669ba4e18a773c5093d0d4e3b
+            name: Content-Type
+            value: application/json
+            disabled: false
+        scripts:
+          afterResponse: |-
+            const body = insomnia.response.json();
+
+            if (body && body.token) {
+              await insomnia.environment.set('authToken', body.token);
+            }
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Courses
+    meta:
+      id: fld_033147525bd1444b9cd1e0b0c0560a6a
+      created: 1746907493759
+      modified: 1746907493759
+      sortKey: -1746907493759
+    children:
+      - url: "{{ base_url }}/api/courses"
+        name: Get Courses (GET /api/courses)
+        meta:
+          id: req_2222c43f6b194037a92b6f2e17b624a9
+          created: 1746907493759
+          modified: 1746991138126
+          isPrivate: false
+          sortKey: -1746907493759
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+            id: pair_c56f8484f29346278dbd1ebd3e634c31
+          - id: pair_a644d71825ef4a379ee8746b6ce900ab
+            name: Content-Type
+            value: application/json
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/courses/2"
+        name: Get Course by ID (GET /api/courses/{id})
+        meta:
+          id: req_1e13bfe9ba534f678cd1ed153ef97570
+          created: 1746907493760
+          modified: 1746907725665
+          isPrivate: false
+          sortKey: -1746907493760
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/courses"
+        name: Create Course (POST /api/courses)
+        meta:
+          id: req_8a07b150149d49b9a09c8251ae6b3ae8
+          created: 1746907493760
+          modified: 1746991582245
+          isPrivate: false
+          sortKey: -1746907493760
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Spring Boot extra",
+              "description": "Full course",
+              "startDate": "2025-06-15",
+              "endDate": "2025-07-30"
+            }
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/courses/1"
+        name: Update Course (PUT /api/courses/{id})
+        meta:
+          id: req_4bb8453ec3e041229e2711df8724f01b
+          created: 1746907493761
+          modified: 1746907740454
+          isPrivate: false
+          sortKey: -1746907493761
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Spring Boot Advanced",
+              "description": "Updated",
+              "startDate": "2025-06-01",
+              "endDate": "2025-07-15"
+            }
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/courses/1"
+        name: Delete Course (DELETE /api/courses/{id})
+        meta:
+          id: req_7d773e47895348048617bbd71b2e5d73
+          created: 1746907493761
+          modified: 1746907756928
+          isPrivate: false
+          sortKey: -1746907493761
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Students
+    meta:
+      id: fld_44dd6076c6fc47ba8bd433484d3179b0
+      created: 1746907493762
+      modified: 1746907493762
+      sortKey: -1746907493762
+    children:
+      - url: "{{ base_url }}/api/students"
+        name: Get Students (GET /api/students)
+        meta:
+          id: req_794f907ea34041a88888cefb7223148f
+          created: 1746907493762
+          modified: 1746907795422
+          isPrivate: false
+          sortKey: -1746907493762
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+            id: pair_862366136d624bd6956ff0821ea0f7f7
+          - id: pair_33d55c674d8a4ae9b93a6a0a82bbcaed
+            name: Content-Type
+            value: application/json
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/students/1"
+        name: Get Student by ID (GET /api/students/{id})
+        meta:
+          id: req_8cefb804ee564a67809b0bf33e0d4089
+          created: 1746907493762
+          modified: 1746907885693
+          isPrivate: false
+          sortKey: -1746907493762
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/students/new"
+        name: Create Student (POST /api/students/course/{courseId})
+        meta:
+          id: req_111ff96c4fbc49888807e013b587c1e6
+          created: 1746907493763
+          modified: 1746991585899
+          isPrivate: false
+          sortKey: -1746907493763
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "firstName": "María",
+              "lastName": "Gómez",
+              "email": "maria@example.com",
+              "phone": "+34666777888",
+              "birthDate": "2000-05-15"
+            }
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/students/1"
+        name: Update Student (PUT /api/students/{id})
+        meta:
+          id: req_374c6c52d5ab4fdfb9cc1d63ea12c273
+          created: 1746907493763
+          modified: 1746907892512
+          isPrivate: false
+          sortKey: -1746907493763
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "firstName": "María-Updated",
+              "lastName": "Gómez",
+              "email": null,
+              "phone": null,
+              "birthDate": "2000-05-15"
+            }
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/courses/1/students"
+        name: Get Students by Course (GET /api/students/course/{courseId})
+        meta:
+          id: req_3aab749f96604162ada1d9e6c787c10b
+          created: 1746907493763
+          modified: 1746991067605
+          isPrivate: false
+          sortKey: -1746907493763
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+            id: pair_1bbc284d3ac043d5949647c552b3a3d9
+          - id: pair_742580eb36a840c191aabd8e6207ca6d
+            name: Content-Type
+            value: application/json
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/students/1"
+        name: Delete Student (DELETE /api/students/{id})
+        meta:
+          id: req_ab2875c76c844aecacc4744212b09f30
+          created: 1746907493763
+          modified: 1746907493763
+          isPrivate: false
+          sortKey: -1746907493763
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ base_url }}/api/students/enroll"
+        name: Enroll Student (POST /api/courses/{courseId}/students/{studentId})
+        meta:
+          id: req_91bd21e459df4aa6a71bda110898d099
+          created: 1746907493764
+          modified: 1746991588747
+          isPrivate: false
+          sortKey: -1746907493764
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {"studentFirstName":"María",
+            "studentLastName":"Gómez",
+            "courseName":"Spring Boot extra"}
+        headers:
+          - name: Authorization
+            value: Bearer {{ authToken }}
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_69a243fcef338de668366ec8496bfed56348590d
+    created: 1746907493768
+    modified: 1746907612456
+environments:
+  name: Base Env
+  meta:
+    id: env_af436fb0c3fa4fc0a8412d992c4f220c
+    created: 1746907493757
+    modified: 1746907612456
+    isPrivate: false
+  data:
+    base_url: http://localhost:8080
+    authToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0NjkwNzYxMiwiZXhwIjoxNzQ2OTk0MDEyfQ.9OsHxonv4rDT7IQ5NeXglb76jsc3NKgdU7RUpWAjrC8
